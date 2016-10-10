@@ -34,7 +34,7 @@ node {
 				stage('Integration Tests') {
 					parallel(Integration: {
 						sling = slingImg.run('')
-						mavenImg.inside("--link ${sling.id}:sling -v /var/jenkins_home/.m2:/var/jenkins_home/.m2") {
+						mavenImg.inside("--link ${sling.id}:sling -v /var/jenkins_home/.m2") {
 							sh 'pwd;mvn --version'
 							sh "mvn sling:install -Dsling.url=http://sling:8080/system/console"
 							sh 'echo "TODO: image we run some mvn based tests here"'
