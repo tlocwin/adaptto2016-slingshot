@@ -36,7 +36,7 @@ node {
 						sling = slingImg.run('')
 						mavenImg.inside("--link ${sling.id}:sling -v /var/jenkins_home/.m2") {
 							sh 'pwd;mvn --version'
-							sh "mvn sling:install -Dsling.url=http://sling:8080/system/console"
+							sh "mvn sling:install -Dsling.url=http://localhost:8080/system/console"
 							sh 'echo "TODO: image we run some mvn based tests here"'
 						}
 						sh 'echo "TODO: image we run other tests here"'
