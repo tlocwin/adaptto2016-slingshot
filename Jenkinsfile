@@ -19,14 +19,13 @@ node {
 		docker.withRegistry('https://localhost/', 'docker-registry-login') {
 			stage('Build') {
 				sshagent (credentials: ['github_ssh']) {              
-					checkout scm
-					// sh "git checkout ${env.CHANGE_TARGET}"
-					// sh "git merge --no-ff origin/pr/${prNumber}"
+					sh "git checkout ${env.CHANGE_TARGET}"
+					sh "git merge --no-ff origin/pr/${prNumber}"
 				}
 				// The Multibranch plugin already runs on a merged detached branch
-				// mavenImg.inside {
-					// sh "mvn clean package" 
-				// }      
+				mavenImg.inside {
+					sh "mvn clean package" 
+				}      
 			}
 
 			def sling
@@ -34,12 +33,11 @@ node {
 				stage('Integration Tests') {
 					parallel(Integration: {
 						sling = slingImg.run('')
-						mavenImg.inside("--link ${sling.id}:sling -v /var/jenkins_home/.m2") {
-							sh 'pwd;mvn --version'
-							//sh "mvn sling:install -Dsling.url=http://localhost:8080/system/console"
-                                                        echo 'Integration OK'
+						mavenImg.inside("--link ${sling.id}:sling") {
+							sh "mvn sling:install -Dsling.url=http://sling:8080/system/console"
+							sh 'echo "TODO: image we run some mvn based tests here"'
 						}
-						//sh 'echo "TODO: image we run other tests here"'
+						sh 'echo "TODO: image we run other tests here"'
 					}, StaticAnalysis: { 
 						echo 'Mocked static testing'
 					})
@@ -52,7 +50,7 @@ node {
 					// TODO: run some more release jobs.
 					// push merge 
 					sshagent (credentials: ['github_ssh']) {
-						// sh "git checkout -b local-tmp;git branch -f master local-tmp;git branch master;git push origin ${env.CHANGE_TARGET};git branch -d local-tmp"
+						sh "git push origin ${env.CHANGE_TARGET}"
 					}
 					sh "docker commit ${sling.id} apachesling/sling:latest"
 					// make sure reference is really to the latest
