@@ -49,9 +49,9 @@ node {
 					echo "Release & Merge"
 					// TODO: run some more release jobs.
 					// push merge 
-					//sshagent (credentials: ['github_ssh']) {
-						//sh "git push origin ${env.CHANGE_TARGET}"
-					//}
+					sshagent (credentials: ['github_ssh']) {
+						sh "git push origin ${env.CHANGE_TARGET}"
+					}
 					sh "docker commit ${sling.id} apachesling/sling:latest"
 					// make sure reference is really to the latest
 					slingImg = docker.image("apachesling/sling")
